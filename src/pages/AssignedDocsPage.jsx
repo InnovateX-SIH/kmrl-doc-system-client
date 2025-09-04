@@ -21,7 +21,7 @@ const AssignedDocsPage = () => {
 
   if (loading) {
     return (
-         <Loading text={"Loading your assignments..."}/>
+      <Loading text={"Loading your assignments..."} />
     )
   }
 
@@ -142,16 +142,16 @@ const AssignedDocsPage = () => {
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   whileHover={{ y: -4 }}
                 >
-                    
-                  <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:border-blue-200/50">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
+
+                  <div className="bg-white/70 w-full backdrop-blur-sm border border-white/20 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 group-hover:border-blue-200/50">
+                    <div className="flex flex-col gap-[20px]">
+                      <div className="w-full flex flex-col">
                         <Link
                           to={`/document/${item.document._id}`}
                           className="block group-hover:text-blue-600 transition-colors duration-200"
                         >
-                          <div className="flex items-center space-x-3 mb-3">
-                            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <div className=" flex items-center space-x-3 mb-3">
+                            <div className="file-icon w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
                               <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path
                                   strokeLinecap="round"
@@ -165,9 +165,10 @@ const AssignedDocsPage = () => {
                               {item.document.originalName}
                             </h3>
                           </div>
+
                         </Link>
 
-                        <div className="bg-blue-50/50 rounded-lg p-4 mb-4 border-l-4 border-blue-400">
+                        <div className="assigned-doc bg-blue-50/50 rounded-lg p-4 mb-4 border-l-4 border-blue-400">
                           <p className="text-gray-700 italic font-medium">"{item.message}"</p>
                         </div>
 
@@ -185,8 +186,8 @@ const AssignedDocsPage = () => {
                       </div>
 
                       <Motion.div
-                        className="ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                        whileHover={{ scale: 1.1 }}
+                        className="ml-4  transition-opacity duration-200"
+                        whileHover={{ scale: 1 }}
                         whileTap={{ scale: 0.95 }}
                       >
                         <Link

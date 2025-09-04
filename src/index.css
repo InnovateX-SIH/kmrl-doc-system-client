@@ -2,6 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
-.text-font{
-    font-family: "Roboto Mono", monospace;
+.text-font {
+  font-family: "Roboto Mono", monospace;
+}
+
+
+
+.nav-links {
+  display: none;
+}
+
+
+@media (min-width: 768px) {
+  .nav-links {
+    display: flex;
+  }
+
+  .mobile-menu {
+    display: none;
+  }
+}
+
+
+.menu {
+  display: none;
+}
+
+
+.das-header {
+  display: flex;
+  flex-direction: row;
+}
+
+@media (max-width: 768px) {
+  .menu {
+    display: flex;
+  }
+
+  .das-header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .dash-header{
+    text-align: center;
+    font-size: 2rem;
+  }
+  .main-dash{
+    width: 100%;
+  }
+  .file-icon {
+    display: none;
+  }
+  .lower-part{
+    display: flex;
+    justify-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .details-header{
+    font-size: 1.5rem;
+  }
+  .assigned-doc{
+    width: 100%;
+  }
 }
