@@ -7,7 +7,7 @@ const Dashboard = () => {
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(true); // For the initial load only
     const [error, setError] = useState('');
-
+    
     useEffect(() => {
         // Function for the very first data load
         const initialFetch = async () => {
