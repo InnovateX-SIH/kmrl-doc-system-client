@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route,Navigate  } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import UploadPage from './pages/UploadPage';
@@ -12,13 +12,22 @@ import AssignedDocsPage from './pages/AssignedDocsPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import CreateUserPage from './pages/CreateUserPage';
 import ManagerDashboard from './pages/ManagerDashboard';
+import SplashScreen from './pages/SplashScreen';
 import ProfilePage from './pages/ProfilePage';
+
+const FirstVisitGate = () => {
+    const hasVisited = localStorage.getItem('hasVisited');
+    // If 'hasVisited' is not set, redirect to the splash screen. Otherwise, redirect to login.
+    return hasVisited ? <Navigate to="/login" /> : <Navigate to="/splash" />;
+};
+
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/splash" element={<SplashScreen />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Login />} />
+        {/* <Route path="/" element={<Login />} /> */}
 
         
         <Route element={<ProtectedRoute />}>
@@ -36,6 +45,8 @@ function App() {
               
           </Route>
         </Route>
+
+        <Route path="/" element={<FirstVisitGate />} />
         
       </Routes>
     </Router>
