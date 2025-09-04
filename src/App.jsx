@@ -17,7 +17,7 @@ import ProfilePage from './pages/ProfilePage';
 
 const FirstVisitGate = () => {
     const hasVisited = localStorage.getItem('hasVisited');
-    // If 'hasVisited' is not set, redirect to the splash screen. Otherwise, redirect to login.
+    
     return hasVisited ? <Navigate to="/login" /> : <Navigate to="/splash" />;
 };
 
