@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create a new instance of axios
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api', // The base URL for all our API calls
+  baseURL: 'https://kmrl-doc-system-backend.onrender.com/api', // The base URL for all our API calls
 });
 
 // IMPORTANT: This is an interceptor. It runs BEFORE each request is sent.
