@@ -63,13 +63,13 @@ const Dashboard = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-            <div className="p-8 w-[70%] mx-auto">
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex flex-col gap-[12px]">
-                        <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent leading-tight">
+            <div className="main-dash p-8 w-[70%] mx-auto">
+                <div className="das-header flex justify-between items-center mb-6">
+                    <div className=" flex flex-col gap-[12px]">
+                        <h1 className="dash-header text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent leading-tight">
                             My Documents
                         </h1>
-                        <p className="text-slate-700 font-medium">Manage and track your document submissions with ease</p>
+                        <p className="text-slate-700 font-medium text-center">Manage and track your document submissions with ease</p>
                     </div>
                     {userInfo?.role === "Staff" && (
                         <Link
@@ -115,7 +115,7 @@ const Dashboard = () => {
                                     className="block hover:shadow-xl transition-all duration-200"
                                 >
                                     <div className="flex w-full items-center justify-center p-6 gap-[20px] bg-white/80 backdrop-blur-sm border border-white/30 rounded-xl shadow-lg hover:bg-white/90 hover:border-blue-200">
-                                        <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                                        <div className="file-icon w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
                                             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path
                                                     strokeLinecap="round"
@@ -127,7 +127,7 @@ const Dashboard = () => {
                                         </div>
                                         <div className="flex flex-col w-[90%] gap-[10px]">
                                             <div className="flex w-full justify-between items-center">
-                                                <h3 className="font-semibold text-lg text-slate-800">{doc.originalName}</h3>
+                                                <h3 className="font-semibold text-lg text-slate-800">{doc.originalName.slice(0, 30)}...</h3>
                                                 <Link to={`/document/${doc._id}`}>
                                                     <Motion.button className="cursor-pointer text-slate-600 hover:text-blue-600 transition-colors">
                                                         <Eye size={20} />
@@ -137,7 +137,7 @@ const Dashboard = () => {
 
                                             <p className="text-slate-600 text-sm">{doc.summary.slice(0, 100)}...</p>
                                             <div className="h-[1px] bg-slate-200 w-full"></div>
-                                            <div className="flex w-full items-center justify-between">
+                                            <div className="lower-part flex w-full items-center justify-between">
                                                 <div className="flex items-center space-x-4 mt-2">
                                                     <p className="text-sm text-slate-600">
                                                         Status:

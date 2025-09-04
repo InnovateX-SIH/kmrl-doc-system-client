@@ -182,7 +182,7 @@ const ProfilePage = () => {
                         >
                           {event.item.status}
                         </span>
-                        .
+                        
                       </p>
                     )}
                     <p className="text-sm text-gray-500 mt-2 flex items-center">
