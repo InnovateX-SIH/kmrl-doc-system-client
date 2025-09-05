@@ -7,6 +7,7 @@ const AlertsDropdown = () => {
     const [alerts, setAlerts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
+
     useEffect(() => {
         const fetchAlerts = async () => {
             setIsLoading(true)
@@ -22,13 +23,16 @@ const AlertsDropdown = () => {
         fetchAlerts()
     }, [])
 
+
+  
+
     return (
         <Motion.div
             initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute right-0 mt-2 w-80 backdrop-blur-xl bg-white/90 rounded-2xl shadow-2xl z-50 border border-white/20 overflow-hidden"
+            className="notifications absolute right-0 mt-2 w-80 backdrop-blur-xl bg-white/90 rounded-2xl shadow-2xl z-50 border border-white/20 overflow-hidden"
             style={{
                 background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%)",
                 boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.2)",
@@ -85,10 +89,10 @@ const AlertsDropdown = () => {
                         </Motion.div>
                     ) : (
                         <ul className="py-2">
-                       
+
 
                             {alerts
-                                .slice() 
+                                .slice()
                                 .sort((a, b) => {
                                     if (a.isRead === b.isRead) return 0;
                                     return a.isRead ? 1 : -1;
