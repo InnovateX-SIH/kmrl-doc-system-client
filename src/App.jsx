@@ -14,6 +14,10 @@ import CreateUserPage from './pages/CreateUserPage';
 import ManagerDashboard from './pages/ManagerDashboard';
 import SplashScreen from './pages/SplashScreen';
 import ProfilePage from './pages/ProfilePage';
+import AdminDashboard from './pages/Admin.jsx';
+// import AdminDashboard from './pages/AdminDashboard'; 
+
+
 
 const FirstVisitGate = () => {
   const hasVisited = localStorage.getItem('hasVisited');
@@ -39,6 +43,10 @@ function App() {
             <Route path="/create-user" element={<CreateUserPage />} />
             <Route path="/manager-dashboard" element={<ManagerDashboard />} />
             <Route path="/profile" element={<ProfilePage />} />
+
+
+<Route path="/admin-dashboard" element={<AdminDashboard />} /> 
+            
 
           </Route>
         </Route>

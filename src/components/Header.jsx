@@ -10,6 +10,8 @@ const Header = () => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"))
   const [showAlerts, setShowAlerts] = useState(false)
   const [MenuState, setMenuState] = useState(false)
+  const homeLink = userInfo?.role === 'Staff' ? '/dashboard' : userInfo?.role === 'Manager' ? '/manager-dashboard' : '/admin-dashboard';
+
   const logoutHandler = () => {
 
     localStorage.removeItem("userInfo")
@@ -41,6 +43,8 @@ const Header = () => {
             >
               KMRL DocSystem
             </Link>
+
+            <Link to={homeLink}>KMRL Synapse</Link>
 
             <nav className="flex nav-links items-center space-x-6">
               {userInfo?.role === "Staff" && (

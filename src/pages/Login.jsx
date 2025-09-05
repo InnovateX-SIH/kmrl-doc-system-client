@@ -25,11 +25,13 @@ const LoginPage = () => {
 
             localStorage.setItem("userInfo", JSON.stringify(data));
 
-            if (data.role === "Staff") {
-                navigate("/dashboard");
-            } else {
-                navigate("/manager-dashboard");
-            }
+         if (data.role === 'Staff') {
+    navigate('/dashboard');
+} else if (data.role === 'Manager') {
+    navigate('/manager-dashboard');
+} else { 
+    navigate('/admin-dashboard');
+}
         } catch (err) {
             console.error("Login failed:", err);
             setError(err.response?.data?.message || "Invalid email or password. Please try again.");
