@@ -136,7 +136,28 @@ const Header = () => {
             </button>
           </div>
 
-          <button onClick={() => setMenuState(!MenuState)} className="menu">{!MenuState ? <Menu /> : <X />}</button>
+          <div className="flex menu gap-[20px] items-center">
+            <div className="relative">
+              <button
+                onClick={() => setShowAlerts(!showAlerts)}
+                className="relative p-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all duration-300 transform hover:scale-105"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
+                </svg>
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
+              </button>
+              {showAlerts && <AlertsDropdown />}
+            </div>
+            <button onClick={() => setMenuState(!MenuState)} >{!MenuState ? <Menu /> : <X />}</button>
+
+          </div>
+
 
         </div>
 
@@ -150,7 +171,7 @@ const Header = () => {
             initial={{ x: -1000 }}
             animate={{ x: 0 }}
             exit={{ x: -1000 }}
-           
+
             className="z-[20] absolute w-full text-white mobile-menu bg-slate-800/95 backdrop-blur-sm border-t border-purple-500/20 px-6 py-4 space-y-4"
           >
             <nav className="flex flex-col space-y-4">
