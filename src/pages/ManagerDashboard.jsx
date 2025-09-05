@@ -2,11 +2,21 @@ import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const ManagerDashboard = () => {
   const [stats, setStats] = useState({ pendingCount: 0, approvedCount: 0 });
   const [recentApprovals, setRecentApprovals] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [analyticsData, setAnalyticsData] = useState([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -15,8 +25,16 @@ const ManagerDashboard = () => {
           api.get('/approvals/stats'),
           api.get('/approvals?limit=5'),
         ]);
+
         setStats(statsRes.data);
         setRecentApprovals(approvalsRes.data);
+
+        // Example for analytics chart data
+        setAnalyticsData([
+          { name: 'Pending', value: statsRes.data.pendingCount || 0 },
+          { name: 'Approved', value: statsRes.data.approvedCount || 0 },
+          { name: 'Rejected', value: 5 }, // TODO: replace with API if available
+        ]);
       } catch (err) {
         console.error('Failed to fetch manager data', err);
       } finally {
@@ -35,6 +53,8 @@ const ManagerDashboard = () => {
       </div>
     );
   }
+
+  const COLORS = ['#FACC15', '#4ADE80', '#FB7185']; // Yellow, Green, Pink
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100'>
@@ -56,7 +76,7 @@ const ManagerDashboard = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className='grid grid-cols-1 md:grid-cols-2 gap-8'
+          className='grid grid-cols-2 md:grid-cols-2 gap-8'
         >
           <div className='p-8 rounded-2xl shadow-xl border border-white/20 bg-white/60 backdrop-blur-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300'>
             <h3 className='text-yellow-700 font-semibold text-lg'>
@@ -76,14 +96,13 @@ const ManagerDashboard = () => {
           </div>
         </motion.div>
 
-        {/* Quick Actions & Recent Requests */}
+        {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
-          className='grid grid-cols-1 lg:grid-cols-2 gap-8'
+          className='grid grid-cols-2 lg:grid-cols-2 gap-8'
         >
-          {/* Quick Actions */}
           <div className='p-8 rounded-2xl shadow-xl border border-white/20 bg-white/60 backdrop-blur-md'>
             <h2 className='text-2xl font-semibold mb-6 text-slate-800'>
               Quick Actions
@@ -95,7 +114,7 @@ const ManagerDashboard = () => {
       text-slate-800 bg-purple-100 hover:bg-purple-200 border border-purple-200 
       transition-all duration-200 shadow-sm hover:shadow-md'
               >
-                View All Pending Approvals
+                View Pending Approvals
               </Link>
               <Link
                 to='/approved-documents'
@@ -103,7 +122,7 @@ const ManagerDashboard = () => {
       text-slate-800 bg-blue-100 hover:bg-blue-200 border border-blue-200 
       transition-all duration-200 shadow-sm hover:shadow-md'
               >
-                View All Approved Docs
+                View Approved Docs
               </Link>
               <Link
                 to='/stats'
@@ -116,35 +135,66 @@ const ManagerDashboard = () => {
             </div>
           </div>
 
-          {/* Recent Requests */}
           <div className='p-8 rounded-2xl shadow-xl border border-white/20 bg-white/60 backdrop-blur-md'>
             <h2 className='text-2xl font-semibold mb-6 text-slate-800'>
-              Recent Pending Requests
+              Document Analytics
             </h2>
-            {recentApprovals.length > 0 ? (
-              <ul className='space-y-4'>
-                {recentApprovals.map((app) => (
-                  <li
-                    key={app._id}
-                    className='border-b border-slate-200 pb-3'
+            <div className='h-[250px]'>
+              <ResponsiveContainer>
+                <PieChart>
+                  <Pie
+                    data={analyticsData}
+                    cx='50%'
+                    cy='50%'
+                    innerRadius={60}
+                    outerRadius={90}
+                    dataKey='value'
+                    paddingAngle={5}
                   >
-                    <Link
-                      to={`/document/${app.document._id}`}
-                      className='font-semibold text-indigo-700 hover:underline'
-                    >
-                      {app.document.originalName}
-                    </Link>
-                    <p className='text-sm text-slate-500'>
-                      From: {app.requester.name}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className='text-slate-500'>No recent requests.</p>
-            )}
+                    {analyticsData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </motion.div>
+
+        {/* Recent Requests */}
+        <div className='p-8 rounded-2xl shadow-xl border border-white/20 bg-white/60 backdrop-blur-md'>
+          <h2 className='text-2xl font-semibold mb-6 text-slate-800'>
+            Recent Pending Requests
+          </h2>
+          {recentApprovals.length > 0 ? (
+            <ul className='space-y-4'>
+              {recentApprovals.map((app) => (
+                <li
+                  key={app._id}
+                  className='border-b border-slate-200 pb-3'
+                >
+                  <Link
+                    to={`/document/${app.document._id}`}
+                    className='font-semibold text-indigo-700 hover:underline'
+                  >
+                    {app.document.originalName}
+                  </Link>
+                  <p className='text-sm text-slate-500'>
+                    From: {app.requester.name}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className='text-slate-500'>No recent requests.</p>
+          )}
+        </div>
+        {/* </motion.div> */}
       </div>
     </div>
   );
