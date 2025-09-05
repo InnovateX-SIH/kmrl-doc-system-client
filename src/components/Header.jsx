@@ -19,6 +19,7 @@ const Header = () => {
 
   useEffect(() => {
     setMenuState(false)
+    setShowAlerts(false)
   }, [location.pathname])
 
   return (
