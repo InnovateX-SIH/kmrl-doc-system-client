@@ -1,156 +1,203 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { Hourglass, CheckCircle, TrendingUp, ArrowRight, Shield } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import api from '../utils/api';
-import Loading from '../components/Loading'; // Assuming you have a Loading component
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 const ManagerDashboard = () => {
-    const [stats, setStats] = useState({ pendingCount: 0, approvedCount: 0 });
-    const [chartData, setChartData] = useState([]);
-    const [recentApprovals, setRecentApprovals] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+  const [stats, setStats] = useState({ pendingCount: 0, approvedCount: 0 });
+  const [recentApprovals, setRecentApprovals] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            try {
-                const [statsRes, approvalsRes, chartRes] = await Promise.all([
-                    api.get('/approvals/stats'),
-                    api.get('/approvals?limit=5'),
-                    api.get('/documents/stats')
-                ]);
-                setStats(statsRes.data);
-                setRecentApprovals(approvalsRes.data);
-                
-                const formattedChartData = chartRes.data.map((item, index) => ({
-                    name: item.category,
-                    value: item.count,
-                    color: ['#3B82F6', '#8B5CF6', '#F59E0B', '#10B981', '#EF4444'][index % 5]
-                }));
-                setChartData(formattedChartData);
+  const [analyticsData, setAnalyticsData] = useState([]);
 
-            } catch (err) {
-                setError("Failed to load dashboard data.");
-                console.error('Failed to fetch manager data', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchDashboardData();
-    }, []);
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [statsRes, approvalsRes] = await Promise.all([
+          api.get('/approvals/stats'),
+          api.get('/approvals?limit=5'),
+        ]);
 
-    if (loading) {
-        return <Loading text={"Loading Manager Dashboard..."} />;
-    }
-    
-    if (error) {
-        return <div className="p-8 text-center text-red-500">{error}</div>;
-    }
+        setStats(statsRes.data);
+        setRecentApprovals(approvalsRes.data);
 
+        // Example for analytics chart data
+        setAnalyticsData([
+          { name: 'Pending', value: statsRes.data.pendingCount || 0 },
+          { name: 'Approved', value: statsRes.data.approvedCount || 0 },
+          { name: 'Rejected', value: 5 }, // TODO: replace with API if available
+        ]);
+      } catch (err) {
+        console.error('Failed to fetch manager data', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
     return (
-        <div className="min-h-screen bg-gray-50 p-6 lg:p-8">
-            {/* Header */}
-            <motion.div 
-                className="mb-12"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-            >
-                <div className="bg-white rounded-2xl p-8 shadow-lg border">
-                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-lg">
-                                <Shield className="h-6 w-6 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-3xl font-bold text-gray-800">Manager Command Center</h1>
-                                <p className="text-gray-500">Oversee approvals and analyze document flow.</p>
-                            </div>
-                        </div>
-                         <p className="text-sm font-medium text-green-600 bg-green-100 px-3 py-1 rounded-full">
-                            System Status: Operational
-                         </p>
-                    </div>
-                </div>
-            </motion.div>
-
-            <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
-                {/* Main Column: Recent Activity & Actions */}
-                <div className="xl:col-span-2 space-y-8">
-                    <motion.div 
-                        className="bg-white p-6 rounded-2xl shadow-lg border"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                    >
-                        <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Pending Requests</h2>
-                        {recentApprovals.length > 0 ? (
-                            <ul className="space-y-3">
-                                {recentApprovals.map(app => (
-                                    <li key={app._id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 transition-colors">
-                                        <div>
-                                            <Link to={`/document/${app.document._id}`} className="font-semibold text-indigo-700 hover:underline">{app.document.originalName}</Link>
-                                            <p className="text-sm text-gray-500">From: {app.requester.name}</p>
-                                        </div>
-                                        <Link to="/approvals" className="text-sm font-medium text-blue-600 hover:text-blue-800">Review</Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : <p className="text-gray-500">Your approval queue is clear!</p>}
-                    </motion.div>
-                </div>
-
-                {/* Side Column: Stats & Analytics */}
-                <div className="space-y-8">
-                    <motion.div 
-                        className="bg-white p-6 rounded-2xl shadow-lg border"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
-                    >
-                         <h2 className="text-xl font-semibold text-gray-800 mb-4">Your Stats</h2>
-                         <div className="space-y-4">
-                             <div className="flex items-center gap-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                <Hourglass className="h-6 w-6 text-yellow-600" />
-                                <div>
-                                    <p className="text-2xl font-bold text-yellow-800">{stats.pendingCount}</p>
-                                    <p className="text-sm font-medium text-yellow-700">Pending Your Approval</p>
-                                </div>
-                             </div>
-                             <div className="flex items-center gap-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                                <CheckCircle className="h-6 w-6 text-green-600" />
-                                <div>
-                                    <p className="text-2xl font-bold text-green-800">{stats.approvedCount}</p>
-                                    <p className="text-sm font-medium text-green-700">Documents You've Approved</p>
-                                </div>
-                             </div>
-                         </div>
-                    </motion.div>
-
-                    <motion.div 
-                        className="bg-white p-6 rounded-2xl shadow-lg border"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
-                    >
-                        <h2 className="text-xl font-semibold flex items-center gap-2 mb-4"><TrendingUp className="text-purple-600" /> Document Categories</h2>
-                        <div className="h-48">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie data={chartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3}>
-                                        {chartData.map((entry) => <Cell key={entry.name} fill={entry.color} />)}
-                                    </Pie>
-                                    <Tooltip />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </motion.div>
-                </div>
-            </div>
-        </div>
+      <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center'>
+        <p className='text-slate-600 text-lg font-medium'>
+          Loading Dashboard...
+        </p>
+      </div>
     );
+  }
+
+  const COLORS = ['#FACC15', '#4ADE80', '#FB7185']; // Yellow, Green, Pink
+
+  return (
+    <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100'>
+      <div className='main-dash p-10 w-[70%] mx-auto space-y-12'>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className='flex justify-between items-center'
+        >
+          <h1 className='text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent leading-tight'>
+            Manager Dashboard
+          </h1>
+        </motion.div>
+
+        {/* Stat Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className='grid grid-cols-2 md:grid-cols-2 gap-8'
+        >
+          <div className='p-8 rounded-2xl shadow-xl border border-white/20 bg-white/60 backdrop-blur-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300'>
+            <h3 className='text-yellow-700 font-semibold text-lg'>
+              Pending Your Approval
+            </h3>
+            <p className='text-5xl font-extrabold text-yellow-900'>
+              {stats.pendingCount}
+            </p>
+          </div>
+          <div className='p-8 rounded-2xl shadow-xl border border-white/20 bg-white/60 backdrop-blur-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300'>
+            <h3 className='text-green-700 font-semibold text-lg'>
+              Documents You've Approved
+            </h3>
+            <p className='text-5xl font-extrabold text-green-900'>
+              {stats.approvedCount}
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className='grid grid-cols-2 lg:grid-cols-2 gap-8'
+        >
+          <div className='p-8 rounded-2xl shadow-xl border border-white/20 bg-white/60 backdrop-blur-md'>
+            <h2 className='text-2xl font-semibold mb-6 text-slate-800'>
+              Quick Actions
+            </h2>
+            <div className='flex flex-col space-y-4'>
+              <Link
+                to='/approvals'
+                className='w-full text-center py-3 px-4 font-semibold rounded-xl 
+      text-slate-800 bg-purple-100 hover:bg-purple-200 border border-purple-200 
+      transition-all duration-200 shadow-sm hover:shadow-md'
+              >
+                View Pending Approvals
+              </Link>
+              <Link
+                to='/approved-documents'
+                className='w-full text-center py-3 px-4 font-semibold rounded-xl 
+      text-slate-800 bg-blue-100 hover:bg-blue-200 border border-blue-200 
+      transition-all duration-200 shadow-sm hover:shadow-md'
+              >
+                View Approved Docs
+              </Link>
+              <Link
+                to='/stats'
+                className='w-full text-center py-3 px-4 font-semibold rounded-xl 
+      text-slate-800 bg-pink-100 hover:bg-pink-200 border border-pink-200 
+      transition-all duration-200 shadow-sm hover:shadow-md'
+              >
+                View Analytics
+              </Link>
+            </div>
+          </div>
+
+          <div className='p-8 rounded-2xl shadow-xl border border-white/20 bg-white/60 backdrop-blur-md'>
+            <h2 className='text-2xl font-semibold mb-6 text-slate-800'>
+              Document Analytics
+            </h2>
+            <div className='h-[250px]'>
+              <ResponsiveContainer>
+                <PieChart>
+                  <Pie
+                    data={analyticsData}
+                    cx='50%'
+                    cy='50%'
+                    innerRadius={60}
+                    outerRadius={90}
+                    dataKey='value'
+                    paddingAngle={5}
+                  >
+                    {analyticsData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Recent Requests */}
+        <div className='p-8 rounded-2xl shadow-xl border border-white/20 bg-white/60 backdrop-blur-md'>
+          <h2 className='text-2xl font-semibold mb-6 text-slate-800'>
+            Recent Pending Requests
+          </h2>
+          {recentApprovals.length > 0 ? (
+            <ul className='space-y-4'>
+              {recentApprovals.map((app) => (
+                <li
+                  key={app._id}
+                  className='border-b border-slate-200 pb-3'
+                >
+                  <Link
+                    to={`/document/${app.document._id}`}
+                    className='font-semibold text-indigo-700 hover:underline'
+                  >
+                    {app.document.originalName}
+                  </Link>
+                  <p className='text-sm text-slate-500'>
+                    From: {app.requester.name}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className='text-slate-500'>No recent requests.</p>
+          )}
+        </div>
+        {/* </motion.div> */}
+      </div>
+    </div>
+  );
 };
 
 export default ManagerDashboard;
