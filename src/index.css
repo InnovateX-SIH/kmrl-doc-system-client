@@ -66,4 +66,10 @@
   .assigned-doc{
     width: 100%;
   }
+  .notifications{
+    right: -50px;
+    top: 60px;
+    width: 250px;
+  
+  }
 }

@@ -25,11 +25,13 @@ const LoginPage = () => {
 
             localStorage.setItem("userInfo", JSON.stringify(data));
 
-            if (data.role === "Staff") {
-                navigate("/dashboard");
-            } else {
-                navigate("/manager-dashboard");
-            }
+         if (data.role === 'Staff') {
+    navigate('/dashboard');
+} else if (data.role === 'Manager') {
+    navigate('/manager-dashboard');
+} else { 
+    navigate('/admin-dashboard');
+}
         } catch (err) {
             console.error("Login failed:", err);
             setError(err.response?.data?.message || "Invalid email or password. Please try again.");
@@ -65,7 +67,7 @@ const LoginPage = () => {
                     transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
                 />
             </div>
-            {/* --- End of background animations --- */}
+       
 
             <motion.div
                 className="relative z-10 w-full max-w-4xl"
@@ -82,7 +84,7 @@ const LoginPage = () => {
                         whileHover={{ scale: 1.02 }}
                     >
                         <motion.img
-                            src="https://kochimetro.org/wp-content/uploads/2018/01/train.png" // Ensure image is in public folder and path is '/view...jpg'
+                            src="https://kochimetro.org/wp-content/uploads/2018/01/train.png"
                             alt="3D Steam Engine Train"
                             className="w-full h-full object-cover"
                             animate={{ scale: [1, 1.05, 1] }}

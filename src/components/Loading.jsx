@@ -1,7 +1,7 @@
 import { motion  as Motion} from 'motion/react'
-export default function Loading({ text }) {
+export default function Loading({ text , height="min-h-screen" }) {
   return (
-       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+       <div className={`${height} bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden`}>
       
         <div className="absolute inset-0">
           <Motion.div
