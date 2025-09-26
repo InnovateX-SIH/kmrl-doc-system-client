@@ -115,6 +115,7 @@ const Dashboard = () => {
                                     className="block hover:shadow-xl transition-all duration-200"
                                 >
                                     <div className="flex w-full items-center justify-center p-6 gap-[20px] bg-white/80 backdrop-blur-sm border border-white/30 rounded-xl shadow-lg hover:bg-white/90 hover:border-blue-200">
+                                    
                                         <div className="file-icon w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
                                             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path

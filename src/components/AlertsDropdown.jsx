@@ -4,6 +4,7 @@ import api from "../utils/api"
 import { Link } from "react-router-dom"
 
 const AlertsDropdown = () => {
+    
     const [alerts, setAlerts] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
@@ -21,6 +22,7 @@ const AlertsDropdown = () => {
             }
         }
         fetchAlerts()
+        
     }, [])
 
 
