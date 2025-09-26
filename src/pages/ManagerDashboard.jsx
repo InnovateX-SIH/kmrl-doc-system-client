@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
+import Loading from "../components/Loading"
+
 import {
   PieChart,
   Pie,
@@ -46,11 +48,10 @@ const ManagerDashboard = () => {
 
   if (loading) {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center'>
-        <p className='text-slate-600 text-lg font-medium'>
-          Loading Dashboard...
-        </p>
-      </div>
+     
+      
+         <Loading text={"Loading documents..."}/>
+        
     );
   }
 
@@ -60,7 +61,7 @@ const ManagerDashboard = () => {
     <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100'>
       <div className='main-dash p-10 w-[70%] mx-auto space-y-12'>
         {/* Header */}
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -69,10 +70,10 @@ const ManagerDashboard = () => {
           <h1 className='text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent leading-tight'>
             Manager Dashboard
           </h1>
-        </motion.div>
+        </Motion.div>
 
         {/* Stat Cards */}
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
@@ -94,10 +95,10 @@ const ManagerDashboard = () => {
               {stats.approvedCount}
             </p>
           </div>
-        </motion.div>
+        </Motion.div>
 
         {/* Quick Actions */}
-        <motion.div
+        <Motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
@@ -164,7 +165,7 @@ const ManagerDashboard = () => {
               </ResponsiveContainer>
             </div>
           </div>
-        </motion.div>
+        </Motion.div>
 
         {/* Recent Requests */}
         <div className='p-8 rounded-2xl shadow-xl border border-white/20 bg-white/60 backdrop-blur-md'>
