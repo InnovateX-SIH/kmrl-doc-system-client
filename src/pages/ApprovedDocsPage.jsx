@@ -1,10 +1,9 @@
 "use client"
-
 import { useState, useEffect } from "react"
 import api from "../utils/api"
 import { Link } from "react-router-dom"
 import { motion as Motion } from "motion/react"
-import { Clock4 , Search} from "lucide-react"
+import { Clock4, Search } from "lucide-react"
 import Loading from "../components/Loading"
 import moment from "moment"
 
@@ -12,8 +11,7 @@ const ApprovedDocsPage = () => {
   const [documents, setDocuments] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
-      const [searchTerm, setSearchTerm] = useState("")
-
+  const [searchTerm, setSearchTerm] = useState("")
 
   // --- MODAL STATES ---
   const [showModal, setShowModal] = useState(false)
@@ -21,7 +19,13 @@ const ApprovedDocsPage = () => {
   const [selectedStaff, setSelectedStaff] = useState("")
   const [currentDocId, setCurrentDocId] = useState(null)
 
+  // --- LOCAL STORAGE FOR FORWARDED DOCS ---
+  const [forwardedDocs, setForwardedDocs] = useState([])
+
   useEffect(() => {
+    const storedDocs = JSON.parse(localStorage.getItem("forwardedDocs")) || []
+    setForwardedDocs(storedDocs)
+
     const fetchApprovedDocs = async () => {
       try {
         setLoading(true)
@@ -59,6 +63,12 @@ const ApprovedDocsPage = () => {
       await api.post(`/documents/${currentDocId}/forward`, {
         staffId: selectedStaff,
       })
+
+      // Save forwarded doc ID to localStorage
+      const updatedForwardedDocs = [...forwardedDocs, currentDocId]
+      setForwardedDocs(updatedForwardedDocs)
+      localStorage.setItem("forwardedDocs", JSON.stringify(updatedForwardedDocs))
+
       alert("Document forwarded successfully!")
       setShowModal(false)
     } catch (err) {
@@ -67,11 +77,13 @@ const ApprovedDocsPage = () => {
     }
   }
 
-   const filteredDocuments = documents.filter((doc) =>
-        doc.originalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (doc.summary && doc.summary.toLowerCase().includes(searchTerm.toLowerCase()))
+  // --- FILTERING LOGIC ---
+  const filteredDocuments = documents
+    .filter((doc) =>
+      doc.originalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (doc.summary && doc.summary.toLowerCase().includes(searchTerm.toLowerCase()))
     )
-
+    .filter((doc) => !forwardedDocs.includes(doc._id)) // hide forwarded docs
 
   if (loading) return <Loading text={"Loading..."} />
 
@@ -97,22 +109,23 @@ const ApprovedDocsPage = () => {
           </div>
         </div>
 
+        {/* Search Bar */}
         <div className="flex shadow-lg backdrop-blur-sm border border-white/30 bg-white/80 items-center px-[20px] rounded-full h-[60px] w-[100%]">
-                            <input
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                type="text"
-                                className="bg-transparent outline-none w-full h-full"
-                                placeholder="Search for document"
-                            />
-                            <Search size={20} />
-
-                        </div>
-
+          <input
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            type="text"
+            className="bg-transparent outline-none w-full h-full"
+            placeholder="Search for document"
+          />
+          <Search size={20} />
+        </div>
 
         {filteredDocuments.length === 0 ? (
           <div className="mt-8 p-8 bg-white/70 backdrop-blur-sm rounded-xl border border-white/20 shadow-lg">
-            <p className="text-slate-600 text-center">No documents have been approved yet.</p>
+            <p className="text-slate-600 text-center">
+              No documents available (either none approved or all forwarded).
+            </p>
           </div>
         ) : (
           <div className="mt-6 space-y-4">
@@ -126,7 +139,12 @@ const ApprovedDocsPage = () => {
               >
                 <div className="flex w-full items-center justify-center p-6 gap-[20px] bg-white/80 backdrop-blur-sm border border-white/30 rounded-xl shadow-lg hover:bg-white/90 hover:border-blue-200">
                   <div className="file-icon w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -153,7 +171,10 @@ const ApprovedDocsPage = () => {
                     </div>
 
                     <p className="text-slate-600">
-                      Uploaded by: <span className="font-medium text-slate-800">{doc.uploadedBy?.name}</span>
+                      Uploaded by:{" "}
+                      <span className="font-medium text-slate-800">
+                        {doc.uploadedBy?.name}
+                      </span>
                     </p>
                     <div className="h-[1px] bg-slate-200 w-full"></div>
                     <div className="lower-part flex w-full items-center justify-between">
@@ -167,7 +188,11 @@ const ApprovedDocsPage = () => {
                       </div>
                       <div className="flex items-center gap-[5px]">
                         <Clock4 className="text-slate-500" size={15} />
-                        <p className="text-sm text-slate-500">{moment(doc.createdAt).format("MMMM Do YYYY, h:mm A")}</p>
+                        <p className="text-sm text-slate-500">
+                          {moment(doc.createdAt).format(
+                            "MMMM Do YYYY, h:mm A"
+                          )}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -177,6 +202,7 @@ const ApprovedDocsPage = () => {
           </div>
         )}
 
+        {/* Modal */}
         {showModal && (
           <Motion.div
             initial={{ opacity: 0 }}
@@ -193,7 +219,10 @@ const ApprovedDocsPage = () => {
               <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent">
                 Forward Document
               </h2>
-              <label htmlFor="staff-select" className="block text-sm font-medium text-slate-700 mb-2">
+              <label
+                htmlFor="staff-select"
+                className="block text-sm font-medium text-slate-700 mb-2"
+              >
                 Select a staff member:
               </label>
               <select
@@ -206,7 +235,11 @@ const ApprovedDocsPage = () => {
                   -- Select Staff --
                 </option>
                 {staffList.map((staff) => (
-                  <option key={staff._id} value={staff._id} className="bg-white text-slate-800">
+                  <option
+                    key={staff._id}
+                    value={staff._id}
+                    className="bg-white text-slate-800"
+                  >
                     {staff.name}
                   </option>
                 ))}
